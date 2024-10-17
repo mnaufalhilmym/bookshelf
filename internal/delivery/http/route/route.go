@@ -35,22 +35,20 @@ func New(
 }
 
 func (r *RouteConfig) ConfigureRoutes() {
-	v1 := r.router.Group("/v1")
+	r.router.POST("/auth/register", r.userHandler.Register)
+	r.router.POST("/auth/login", r.userHandler.Login)
 
-	v1.POST("/auth/register", r.userHandler.Register)
-	v1.POST("/auth/login", r.userHandler.Login)
+	r.router.Use(r.validateTokenMiddleware.ValidateToken())
 
-	v1.Use(r.validateTokenMiddleware.ValidateToken())
+	r.router.GET("/authors", r.authorHandler.GetMany)
+	r.router.GET("/authors/:id", r.authorHandler.Get)
+	r.router.POST("/authors", r.authorHandler.Create)
+	r.router.PUT("/authors/:id", r.authorHandler.Update)
+	r.router.DELETE("/authors/:id", r.authorHandler.Delete)
 
-	v1.GET("/authors", r.authorHandler.GetMany)
-	v1.GET("/authors/:id", r.authorHandler.Get)
-	v1.POST("/authors", r.authorHandler.Create)
-	v1.PUT("/authors/:id", r.authorHandler.Update)
-	v1.DELETE("/authors/:id", r.authorHandler.Delete)
-
-	v1.GET("/books", r.bookHandler.GetMany)
-	v1.GET("/books/:id", r.bookHandler.Get)
-	v1.POST("/books", r.bookHandler.Create)
-	v1.PUT("/books/:id", r.bookHandler.Update)
-	v1.DELETE("/books/:id", r.bookHandler.Delete)
+	r.router.GET("/books", r.bookHandler.GetMany)
+	r.router.GET("/books/:id", r.bookHandler.Get)
+	r.router.POST("/books", r.bookHandler.Create)
+	r.router.PUT("/books/:id", r.bookHandler.Update)
+	r.router.DELETE("/books/:id", r.bookHandler.Delete)
 }

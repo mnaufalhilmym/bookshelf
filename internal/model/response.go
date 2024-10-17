@@ -1,16 +1,19 @@
 package model
 
 import (
+	"encoding/json"
 	"math"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mnaufalhilmym/bookshelf/internal/util"
 )
 
 type Response[T any] struct {
 	Error      string      `json:"error,omitempty"`
 	Pagination *pagination `json:"pagination,omitempty"`
 	Data       T           `json:"data"`
+	DataHash   string      `json:"data_hash"`
 }
 
 type pagination struct {
@@ -21,20 +24,26 @@ type pagination struct {
 }
 
 func ResponseCreated[T any](ctx *gin.Context, data T) {
+	dataJSON, _ := json.Marshal(data)
 	ctx.JSON(http.StatusCreated, Response[T]{
-		Data: data,
+		Data:     data,
+		DataHash: util.CalculateHash(string(dataJSON)),
 	})
 }
 
 func ResponseOK[T any](ctx *gin.Context, data T) {
+	dataJSON, _ := json.Marshal(data)
 	ctx.JSON(http.StatusOK, Response[T]{
-		Data: data,
+		Data:     data,
+		DataHash: util.CalculateHash(string(dataJSON)),
 	})
 }
 
 func ResponseOKPaginated[T any](ctx *gin.Context, data []T, totalItem int64, page int, size int) {
+	dataJSON, _ := json.Marshal(data)
 	ctx.JSON(http.StatusOK, Response[[]T]{
-		Data: data,
+		Data:     data,
+		DataHash: util.CalculateHash(string(dataJSON)),
 		Pagination: &pagination{
 			Page:      page,
 			Size:      size,

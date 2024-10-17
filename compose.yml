@@ -1,0 +1,15 @@
+services:
+  bookshelf:
+    container_name: bookshelf
+    image: docker.io/mnaufalhilmym/bookshelf
+    restart: always
+    networks:
+      - bookshelf-network
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config.yml:/config.yml
+      - ./sqlite.db:/sqlite.db
+
+networks:
+  bookshelf-network:

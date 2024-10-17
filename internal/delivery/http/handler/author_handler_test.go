@@ -29,7 +29,7 @@ func createAuthor(t *testing.T, router *gin.Engine, payload *model.CreateAuthorR
 	reqBody, err := json.Marshal(payload)
 	assert.NoError(t, err)
 
-	httpReq, err := http.NewRequest(http.MethodPost, "/v1/authors", bytes.NewReader(reqBody))
+	httpReq, err := http.NewRequest(http.MethodPost, "/authors", bytes.NewReader(reqBody))
 	assert.NoError(t, err)
 	httpReq.Header.Set("Content-Type", "application/json")
 
@@ -44,8 +44,8 @@ func TestAuthorHandler_GetMany(t *testing.T) {
 
 	handler := newAuthorHandler()
 
-	router.GET("/v1/authors", handler.GetMany)
-	router.POST("/v1/authors", handler.Create)
+	router.GET("/authors", handler.GetMany)
+	router.POST("/authors", handler.Create)
 
 	req1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -66,7 +66,7 @@ func TestAuthorHandler_GetMany(t *testing.T) {
 			Birthdate: req1.Birthdate,
 		}}
 
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors?name=name%201", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors?name=name%201", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -87,7 +87,7 @@ func TestAuthorHandler_GetMany(t *testing.T) {
 			Birthdate: req2.Birthdate,
 		}}
 
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors?birthdate_start=2021-10-16T00:00:00Z", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors?birthdate_start=2021-10-16T00:00:00Z", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -102,7 +102,7 @@ func TestAuthorHandler_GetMany(t *testing.T) {
 	})
 
 	t.Run("Negative Case - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors?birthdate_start=2021-10-16", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors?birthdate_start=2021-10-16", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -124,8 +124,8 @@ func TestAuthorHandler_Get(t *testing.T) {
 
 	handler := newAuthorHandler()
 
-	router.GET("/v1/authors/:id", handler.Get)
-	router.POST("/v1/authors", handler.Create)
+	router.GET("/authors/:id", handler.Get)
+	router.POST("/authors", handler.Create)
 
 	req1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -141,7 +141,7 @@ func TestAuthorHandler_Get(t *testing.T) {
 			Birthdate: req1.Birthdate,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors/1", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors/1", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -156,7 +156,7 @@ func TestAuthorHandler_Get(t *testing.T) {
 	})
 
 	t.Run("Negative Case 1 - validation error", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors/0", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors/0", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -171,7 +171,7 @@ func TestAuthorHandler_Get(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - wrong id", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors/2", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors/2", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -186,7 +186,7 @@ func TestAuthorHandler_Get(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/authors/xx", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/authors/xx", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -208,7 +208,7 @@ func TestAuthorHandler_Create(t *testing.T) {
 
 	handler := newAuthorHandler()
 
-	router.POST("/v1/authors", handler.Create)
+	router.POST("/authors", handler.Create)
 
 	t.Run("Positive Case - create author", func(t *testing.T) {
 		payload := model.CreateAuthorRequest{
@@ -224,7 +224,7 @@ func TestAuthorHandler_Create(t *testing.T) {
 			Birthdate: payload.Birthdate,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/authors", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/authors", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -246,7 +246,7 @@ func TestAuthorHandler_Create(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/authors", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/authors", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -262,7 +262,7 @@ func TestAuthorHandler_Create(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/authors", bytes.NewReader([]byte{}))
+		httpReq, err := http.NewRequest(http.MethodPost, "/authors", bytes.NewReader([]byte{}))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -285,8 +285,8 @@ func TestAuthorHandler_Update(t *testing.T) {
 
 	handler := newAuthorHandler()
 
-	router.POST("/v1/authors", handler.Create)
-	router.PUT("/v1/authors/:id", handler.Update)
+	router.POST("/authors", handler.Create)
+	router.PUT("/authors/:id", handler.Update)
 
 	req1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -310,7 +310,7 @@ func TestAuthorHandler_Update(t *testing.T) {
 			Birthdate: *payload.Birthdate,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/authors/1", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPut, "/authors/1", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -334,7 +334,7 @@ func TestAuthorHandler_Update(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/authors/2", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPut, "/authors/2", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -358,7 +358,7 @@ func TestAuthorHandler_Update(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/authors/0", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPut, "/authors/0", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -374,7 +374,7 @@ func TestAuthorHandler_Update(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/authors/1", bytes.NewReader([]byte{}))
+		httpReq, err := http.NewRequest(http.MethodPut, "/authors/1", bytes.NewReader([]byte{}))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -397,8 +397,8 @@ func TestAuthorHandler_Delete(t *testing.T) {
 
 	handler := newAuthorHandler()
 
-	router.POST("/v1/authors", handler.Create)
-	router.DELETE("/v1/authors/:id", handler.Delete)
+	router.POST("/authors", handler.Create)
+	router.DELETE("/authors/:id", handler.Delete)
 
 	t.Run("Positive Case - delete author", func(t *testing.T) {
 		req1 := &model.CreateAuthorRequest{
@@ -408,11 +408,9 @@ func TestAuthorHandler_Delete(t *testing.T) {
 
 		createAuthor(t, router, req1)
 
-		expectedRes := model.AuthorResponse{
-			ID: 1,
-		}
+		expectedRes := 1
 
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/authors/1", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/authors/1", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -421,14 +419,14 @@ func TestAuthorHandler_Delete(t *testing.T) {
 
 		assert.EqualValues(t, http.StatusOK, testRec.Code)
 
-		res := new(model.Response[model.AuthorResponse])
+		res := new(model.Response[int])
 		assert.NoError(t, json.Unmarshal(testRec.Body.Bytes(), res))
 
 		assert.EqualValues(t, expectedRes, res.Data)
 	})
 
 	t.Run("Negative Case 1 - wrong id", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/authors/2", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/authors/2", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -444,7 +442,7 @@ func TestAuthorHandler_Delete(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - validation error", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/authors/0", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/authors/0", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -460,7 +458,7 @@ func TestAuthorHandler_Delete(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/authors/xx", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/authors/xx", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 

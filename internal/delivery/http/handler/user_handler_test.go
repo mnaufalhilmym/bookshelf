@@ -31,7 +31,7 @@ func TestUserHandler_Register(t *testing.T) {
 
 	handler := newUserHandler()
 
-	router.POST("/v1/auth/register", handler.Register)
+	router.POST("/auth/register", handler.Register)
 
 	t.Run("Positive Case - register", func(t *testing.T) {
 		payload := model.RegisterUserRequest{
@@ -46,7 +46,7 @@ func TestUserHandler_Register(t *testing.T) {
 			Username: payload.Username,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -70,14 +70,14 @@ func TestUserHandler_Register(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
 		testRec := httptest.NewRecorder()
 		router.ServeHTTP(testRec, httpReq)
 
-		httpReq, err = http.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewReader(reqBody))
+		httpReq, err = http.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -93,7 +93,7 @@ func TestUserHandler_Register(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewReader([]byte{}))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader([]byte{}))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -116,7 +116,7 @@ func TestUserHandler_Register(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -139,8 +139,8 @@ func TestUserHandler_Login(t *testing.T) {
 
 	handler := newUserHandler()
 
-	router.POST("/v1/auth/register", handler.Register)
-	router.POST("/v1/auth/login", handler.Login)
+	router.POST("/auth/register", handler.Register)
+	router.POST("/auth/login", handler.Login)
 
 	registerPayload := model.RegisterUserRequest{
 		Username: "unique_username",
@@ -149,7 +149,7 @@ func TestUserHandler_Login(t *testing.T) {
 	reqBody, err := json.Marshal(registerPayload)
 	assert.NoError(t, err)
 
-	httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewReader(reqBody))
+	httpReq, err := http.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader(reqBody))
 	assert.NoError(t, err)
 	httpReq.Header.Set("Content-Type", "application/json")
 
@@ -169,7 +169,7 @@ func TestUserHandler_Login(t *testing.T) {
 			Username: payload.Username,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/login", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -194,7 +194,7 @@ func TestUserHandler_Login(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/login", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -217,7 +217,7 @@ func TestUserHandler_Login(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/login", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -233,7 +233,7 @@ func TestUserHandler_Login(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/login", bytes.NewReader([]byte{}))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewReader([]byte{}))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -256,7 +256,7 @@ func TestUserHandler_Login(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/auth/login", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 

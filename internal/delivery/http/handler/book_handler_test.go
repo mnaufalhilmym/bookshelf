@@ -33,7 +33,7 @@ func createBook(t *testing.T, router *gin.Engine, payload *model.CreateBookReque
 	reqBody, err := json.Marshal(payload)
 	assert.NoError(t, err)
 
-	httpReq, err := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(reqBody))
+	httpReq, err := http.NewRequest(http.MethodPost, "/books", bytes.NewReader(reqBody))
 	assert.NoError(t, err)
 	httpReq.Header.Set("Content-Type", "application/json")
 
@@ -48,9 +48,9 @@ func TestBookHandler_GetMany(t *testing.T) {
 
 	authorHandler, userHandler := newAuthorAndBookHandler()
 
-	router.POST("/v1/authors", authorHandler.Create)
-	router.GET("/v1/books", userHandler.GetMany)
-	router.POST("/v1/books", userHandler.Create)
+	router.POST("/authors", authorHandler.Create)
+	router.GET("/books", userHandler.GetMany)
+	router.POST("/books", userHandler.Create)
 
 	reqAuthor1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -82,7 +82,7 @@ func TestBookHandler_GetMany(t *testing.T) {
 			AuthorName: reqAuthor1.Name,
 		}}
 
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books?title=1", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books?title=1", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -105,7 +105,7 @@ func TestBookHandler_GetMany(t *testing.T) {
 			AuthorName: reqAuthor1.Name,
 		}}
 
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books?isbn=0563", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books?isbn=0563", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -120,7 +120,7 @@ func TestBookHandler_GetMany(t *testing.T) {
 	})
 
 	t.Run("Negative Case 1 - invalid request", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books?author_id=xx", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books?author_id=xx", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -135,7 +135,7 @@ func TestBookHandler_GetMany(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - validation error", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books?author_id=0", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books?author_id=0", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -157,9 +157,9 @@ func TestBookHandler_Get(t *testing.T) {
 
 	authorHandler, userHandler := newAuthorAndBookHandler()
 
-	router.POST("/v1/authors", authorHandler.Create)
-	router.GET("/v1/books/:id", userHandler.Get)
-	router.POST("/v1/books", userHandler.Create)
+	router.POST("/authors", authorHandler.Create)
+	router.GET("/books/:id", userHandler.Get)
+	router.POST("/books", userHandler.Create)
 
 	reqAuthor1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -183,7 +183,7 @@ func TestBookHandler_Get(t *testing.T) {
 			AuthorName: reqAuthor1.Name,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books/1", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books/1", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -198,7 +198,7 @@ func TestBookHandler_Get(t *testing.T) {
 	})
 
 	t.Run("Negative Case 1 - validation error", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books/0", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books/0", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -213,7 +213,7 @@ func TestBookHandler_Get(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - wrong id", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books/2", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books/2", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -228,7 +228,7 @@ func TestBookHandler_Get(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodGet, "/v1/books/xx", nil)
+		httpReq, err := http.NewRequest(http.MethodGet, "/books/xx", nil)
 		assert.NoError(t, err)
 
 		testRec := httptest.NewRecorder()
@@ -250,8 +250,8 @@ func TestBookHandler_Create(t *testing.T) {
 
 	authorHandler, userHandler := newAuthorAndBookHandler()
 
-	router.POST("/v1/authors", authorHandler.Create)
-	router.POST("/v1/books", userHandler.Create)
+	router.POST("/authors", authorHandler.Create)
+	router.POST("/books", userHandler.Create)
 
 	reqAuthor1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -276,7 +276,7 @@ func TestBookHandler_Create(t *testing.T) {
 			AuthorName: reqAuthor1.Name,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/books", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -298,7 +298,7 @@ func TestBookHandler_Create(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPost, "/books", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -314,7 +314,7 @@ func TestBookHandler_Create(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader([]byte{}))
+		httpReq, err := http.NewRequest(http.MethodPost, "/books", bytes.NewReader([]byte{}))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -337,9 +337,9 @@ func TestBookHandler_Update(t *testing.T) {
 
 	authorHandler, userHandler := newAuthorAndBookHandler()
 
-	router.POST("/v1/authors", authorHandler.Create)
-	router.POST("/v1/books", userHandler.Create)
-	router.PUT("/v1/books/:id", userHandler.Update)
+	router.POST("/authors", authorHandler.Create)
+	router.POST("/books", userHandler.Create)
+	router.PUT("/books/:id", userHandler.Update)
 
 	reqAuthor1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -371,7 +371,7 @@ func TestBookHandler_Update(t *testing.T) {
 			AuthorName: reqAuthor1.Name,
 		}
 
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/books/1", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPut, "/books/1", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -393,7 +393,7 @@ func TestBookHandler_Update(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/books/2", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPut, "/books/2", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -415,7 +415,7 @@ func TestBookHandler_Update(t *testing.T) {
 		reqBody, err := json.Marshal(payload)
 		assert.NoError(t, err)
 
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/books/0", bytes.NewReader(reqBody))
+		httpReq, err := http.NewRequest(http.MethodPut, "/books/0", bytes.NewReader(reqBody))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -431,7 +431,7 @@ func TestBookHandler_Update(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodPut, "/v1/books/1", bytes.NewReader([]byte{}))
+		httpReq, err := http.NewRequest(http.MethodPut, "/books/1", bytes.NewReader([]byte{}))
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -454,9 +454,9 @@ func TestBookHandler_Delete(t *testing.T) {
 
 	authorHandler, userHandler := newAuthorAndBookHandler()
 
-	router.POST("/v1/authors", authorHandler.Create)
-	router.POST("/v1/books", userHandler.Create)
-	router.DELETE("/v1/books/:id", userHandler.Delete)
+	router.POST("/authors", authorHandler.Create)
+	router.POST("/books", userHandler.Create)
+	router.DELETE("/books/:id", userHandler.Delete)
 
 	reqAuthor1 := &model.CreateAuthorRequest{
 		Name:      "Author Name 1",
@@ -472,11 +472,9 @@ func TestBookHandler_Delete(t *testing.T) {
 		}
 		createBook(t, router, reqBook1)
 
-		expectedRes := model.BookResponse{
-			ID: 1,
-		}
+		expectedRes := 1
 
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/books/1", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/books/1", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -485,14 +483,14 @@ func TestBookHandler_Delete(t *testing.T) {
 
 		assert.EqualValues(t, http.StatusOK, testRec.Code)
 
-		res := new(model.Response[model.BookResponse])
+		res := new(model.Response[int])
 		assert.NoError(t, json.Unmarshal(testRec.Body.Bytes(), res))
 
 		assert.EqualValues(t, expectedRes, res.Data)
 	})
 
 	t.Run("Negative Case 1 - wrong id", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/books/2", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/books/2", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -508,7 +506,7 @@ func TestBookHandler_Delete(t *testing.T) {
 	})
 
 	t.Run("Negative Case 2 - validation error", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/books/0", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/books/0", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 
@@ -524,7 +522,7 @@ func TestBookHandler_Delete(t *testing.T) {
 	})
 
 	t.Run("Negative Case 3 - invalid request body", func(t *testing.T) {
-		httpReq, err := http.NewRequest(http.MethodDelete, "/v1/books/xx", nil)
+		httpReq, err := http.NewRequest(http.MethodDelete, "/books/xx", nil)
 		assert.NoError(t, err)
 		httpReq.Header.Set("Content-Type", "application/json")
 

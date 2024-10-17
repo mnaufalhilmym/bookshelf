@@ -7,7 +7,7 @@ RUN go mod download
 RUN go vet -v ./cmd
 RUN go test -v ./cmd
 
-RUN CGO_ENABLED=0 go build -o /go/bin/app ./cmd
+RUN CGO_ENABLED=1 go build -o /go/bin/app ./cmd
 
 FROM gcr.io/distroless/static-debian12
 
