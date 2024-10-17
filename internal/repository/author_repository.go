@@ -72,7 +72,7 @@ func (*AuthorRepository) searchFilter(
 	return func(tx *gorm.DB) *gorm.DB {
 		if name != nil && *name != "" {
 			fname := "%" + *name + "%"
-			tx = tx.Where("name ILIKE ?", fname)
+			tx = tx.Where("LOWER(name) LIKE LOWER(?)", fname)
 		}
 
 		if birthdateStart != nil {
@@ -80,7 +80,7 @@ func (*AuthorRepository) searchFilter(
 		}
 
 		if birthdateEnd != nil {
-			tx = tx.Where("birthdate >= ?", *birthdateEnd)
+			tx = tx.Where("birthdate <= ?", *birthdateEnd)
 		}
 
 		return tx

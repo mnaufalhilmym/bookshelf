@@ -59,7 +59,7 @@ func (uc *AuthorUsecase) Get(ctx context.Context, request *model.GetAuthorReques
 	author, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("author not found"))
+			return nil, model.NotFound(errors.New("author not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
 	}
@@ -100,7 +100,7 @@ func (uc *AuthorUsecase) Update(ctx context.Context, request *model.UpdateAuthor
 	author, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("id not found"))
+			return nil, model.NotFound(errors.New("id not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
 	}
@@ -132,7 +132,7 @@ func (uc *AuthorUsecase) Delete(ctx context.Context, request *model.DeleteAuthor
 	author, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("id not found"))
+			return nil, model.NotFound(errors.New("id not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
 	}

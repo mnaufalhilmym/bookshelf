@@ -21,6 +21,13 @@ func BadRequest(err error) error {
 	}
 }
 
+func NotFound(err error) error {
+	return &Error{
+		Code: http.StatusNotFound,
+		Err:  err,
+	}
+}
+
 func InternalServerError(err error) error {
 	return &Error{
 		Code: http.StatusInternalServerError,

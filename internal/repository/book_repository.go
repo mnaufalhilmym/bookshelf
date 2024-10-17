@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/mnaufalhilmym/bookshelf/internal/entity"
@@ -45,7 +46,7 @@ func (r *BookRepository) Search(
 	})
 
 	totalTask := goasync.Spawn(func(ctx context.Context) (total int64, err error) {
-		err = db.Model(&entity.Book{}).Scopes(filter).Count(&total).Error
+		err = db.Model(&entity.Book{}).Joins("Author").Scopes(filter).Count(&total).Error
 		return
 	})
 
@@ -64,6 +65,17 @@ func (r *BookRepository) Search(
 	return books, total, nil
 }
 
+func (*BookRepository) FindByID(db *gorm.DB, id int) (*entity.Book, error) {
+	var entity *entity.Book
+	if err := db.Joins("Author").Where("books.id = ?", id).First(&entity).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			gotracing.Error("Failed to find entity from database", err)
+		}
+		return nil, err
+	}
+	return entity, nil
+}
+
 func (*BookRepository) searchFilter(
 	title *string,
 	isbn *string,
@@ -73,21 +85,21 @@ func (*BookRepository) searchFilter(
 	return func(tx *gorm.DB) *gorm.DB {
 		if title != nil && *title != "" {
 			ftitle := "%" + *title + "%"
-			tx = tx.Where("books.title ILIKE ?", ftitle)
+			tx = tx.Where("LOWER(books.title) LIKE LOWER(?)", ftitle)
 		}
 
 		if isbn != nil && *isbn != "" {
 			fisbn := "%" + *isbn + "%"
-			tx = tx.Where("books.isbn ILIKE ?", fisbn)
+			tx = tx.Where("LOWER(books.isbn) LIKE LOWER(?)", fisbn)
 		}
 
 		if authorID != nil {
-			tx = tx.Where("authors.id = ?", *authorID)
+			tx = tx.Where("Author.id = ?", *authorID)
 		}
 
 		if authorName != nil && *authorName != "" {
 			fname := "%" + *authorName + "%"
-			tx = tx.Where("authors.name ILIKE ?", fname)
+			tx = tx.Where("LOWER(Author.name) LIKE LOWER(?)", fname)
 		}
 
 		return tx

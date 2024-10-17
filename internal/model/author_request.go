@@ -14,7 +14,7 @@ type GetAuthorRequest struct {
 }
 
 type CreateAuthorRequest struct {
-	Name      string    `json:"name" binding:"required"`
+	Name      string    `json:"name" binding:"required,gt=0"`
 	Birthdate time.Time `json:"birthdate" binding:"required"`
 }
 

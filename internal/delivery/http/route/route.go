@@ -29,18 +29,18 @@ func New(
 func (r *RouteConfig) ConfigureRoutes() {
 	v1 := r.router.Group("/v1")
 
-	v1.POST("/auth/register")
-	v1.POST("/auth/login")
+	v1.POST("/auth/register", r.userHandler.Register)
+	v1.POST("/auth/login", r.userHandler.Login)
 
-	v1.GET("/authors")
-	v1.GET("/authors/:id")
-	v1.POST("/authors")
-	v1.PUT("/authors/:id")
-	v1.DELETE("/authors/:id")
+	v1.GET("/authors", r.authorHandler.GetMany)
+	v1.GET("/authors/:id", r.authorHandler.Get)
+	v1.POST("/authors", r.authorHandler.Create)
+	v1.PUT("/authors/:id", r.authorHandler.Update)
+	v1.DELETE("/authors/:id", r.authorHandler.Delete)
 
-	v1.GET("/books")
-	v1.GET("/books/:id")
-	v1.POST("/books")
-	v1.PUT("/books/:id")
-	v1.DELETE("/books/:id")
+	v1.GET("/books", r.authorHandler.GetMany)
+	v1.GET("/books/:id", r.authorHandler.Get)
+	v1.POST("/books", r.authorHandler.Create)
+	v1.PUT("/books/:id", r.authorHandler.Update)
+	v1.DELETE("/books/:id", r.authorHandler.Delete)
 }

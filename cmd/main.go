@@ -16,6 +16,7 @@ func main() {
 	)
 
 	db := config.NewDatabase(
+		conf.GetString("db.name"),
 		conf.GetInt("db.pool.idle"),
 		conf.GetInt("db.pool.max"),
 		conf.GetInt("db.pool.lifetime"),

@@ -2,8 +2,10 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/mnaufalhilmym/bookshelf/internal/model"
 	"github.com/mnaufalhilmym/bookshelf/internal/usecase"
 	"github.com/mnaufalhilmym/gotracing"
@@ -21,6 +23,10 @@ func (h *AuthorHandler) GetMany(ctx *gin.Context) {
 	request := new(model.GetManyAuthorsRequest)
 	if err := ctx.ShouldBindQuery(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -45,6 +51,10 @@ func (h *AuthorHandler) Get(ctx *gin.Context) {
 	request := new(model.GetAuthorRequest)
 	if err := ctx.ShouldBindUri(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -62,6 +72,10 @@ func (h *AuthorHandler) Create(ctx *gin.Context) {
 	request := new(model.CreateAuthorRequest)
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -79,11 +93,19 @@ func (h *AuthorHandler) Update(ctx *gin.Context) {
 	request := new(model.UpdateAuthorRequest)
 	if err := ctx.ShouldBindUri(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -101,6 +123,10 @@ func (h *AuthorHandler) Delete(ctx *gin.Context) {
 	request := new(model.DeleteAuthorRequest)
 	if err := ctx.ShouldBindUri(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}

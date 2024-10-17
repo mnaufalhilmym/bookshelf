@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type response[T any] struct {
+type Response[T any] struct {
 	Error      string      `json:"error,omitempty"`
 	Pagination *pagination `json:"pagination,omitempty"`
 	Data       T           `json:"data,omitempty"`
@@ -21,19 +21,19 @@ type pagination struct {
 }
 
 func ResponseCreated[T any](ctx *gin.Context, data T) {
-	ctx.JSON(http.StatusCreated, response[T]{
+	ctx.JSON(http.StatusCreated, Response[T]{
 		Data: data,
 	})
 }
 
 func ResponseOK[T any](ctx *gin.Context, data T) {
-	ctx.JSON(http.StatusOK, response[T]{
+	ctx.JSON(http.StatusOK, Response[T]{
 		Data: data,
 	})
 }
 
 func ResponseOKPaginated[T any](ctx *gin.Context, data []T, totalItem int64, page int, size int) {
-	ctx.JSON(http.StatusOK, response[[]T]{
+	ctx.JSON(http.StatusOK, Response[[]T]{
 		Data: data,
 		Pagination: &pagination{
 			Page:      page,
@@ -47,13 +47,13 @@ func ResponseOKPaginated[T any](ctx *gin.Context, data []T, totalItem int64, pag
 func ResponseError(ctx *gin.Context, err error) {
 	appError, ok := err.(*Error)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, response[any]{
+		ctx.JSON(http.StatusInternalServerError, Response[any]{
 			Error: err.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(appError.Code, response[any]{
+	ctx.JSON(appError.Code, Response[any]{
 		Error: appError.Err.Error(),
 	})
 }

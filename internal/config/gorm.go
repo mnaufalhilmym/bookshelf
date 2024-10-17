@@ -11,19 +11,22 @@ import (
 )
 
 func NewDatabase(
+	database string,
 	poolIdle int,
 	poolMax int,
 	poolLifetime int,
 ) *gorm.DB {
 	db, err := gorm.Open(
-		sqlite.Open("gorm.db"),
+		sqlite.Open(database),
 		&gorm.Config{
+			TranslateError: true,
 			Logger: logger.New(&gormTracingWriter{}, logger.Config{
-				SlowThreshold:        5 * time.Second,
+				SlowThreshold:        time.Second,
 				ParameterizedQueries: true,
 				LogLevel:             logger.Info,
 			}),
-		})
+		},
+	)
 	if err != nil {
 		panic(fmt.Errorf("failed to connect to database: %w", err))
 	}

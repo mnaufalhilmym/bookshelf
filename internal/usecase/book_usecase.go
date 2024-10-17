@@ -63,7 +63,7 @@ func (uc *BookUsecase) Get(ctx context.Context, request *model.GetBookRequest) (
 	book, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("book not found"))
+			return nil, model.NotFound(errors.New("book not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find book data by id"))
 	}
@@ -83,7 +83,7 @@ func (uc *BookUsecase) Create(ctx context.Context, request *model.CreateBookRequ
 	author, err := uc.authorRepository.FindByID(tx, request.AuthorID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("author not found"))
+			return nil, model.NotFound(errors.New("author not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
 	}
@@ -114,7 +114,7 @@ func (uc *BookUsecase) Update(ctx context.Context, request *model.UpdateBookRequ
 	book, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("id not found"))
+			return nil, model.NotFound(errors.New("id not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find book data by id"))
 	}
@@ -131,7 +131,7 @@ func (uc *BookUsecase) Update(ctx context.Context, request *model.UpdateBookRequ
 		author, err := uc.authorRepository.FindByID(tx, *request.AuthorID)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, model.BadRequest(errors.New("id not found"))
+				return nil, model.NotFound(errors.New("id not found"))
 			}
 			return nil, model.InternalServerError(errors.New("failed to find author data by id"))
 		}
@@ -159,7 +159,7 @@ func (uc *BookUsecase) Delete(ctx context.Context, request *model.DeleteBookRequ
 	book, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("id not found"))
+			return nil, model.NotFound(errors.New("id not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find book data by id"))
 	}

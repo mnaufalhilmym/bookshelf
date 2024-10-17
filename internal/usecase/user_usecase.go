@@ -73,7 +73,7 @@ func (uc *UserUsecase) Login(ctx context.Context, request *model.LoginRequest) (
 	user, err := uc.repository.FindByUsername(tx, request.Username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.BadRequest(errors.New("username not found"))
+			return nil, model.NotFound(errors.New("username not found"))
 		}
 		return nil, model.InternalServerError(errors.New("failed to find user data by username"))
 	}
@@ -90,8 +90,8 @@ func (uc *UserUsecase) Login(ctx context.Context, request *model.LoginRequest) (
 	jwtClaims.Subject = user.Username
 	jwtClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(uc.jwtExpiration))
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwtClaims)
-	tokenString, err := token.SignedString(uc.jwtKey)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
+	tokenString, err := token.SignedString([]byte(uc.jwtKey))
 	if err != nil {
 		gotracing.Error("Failed to sign JWT token", err)
 		return nil, model.InternalServerError(errors.New("failed to sign JWT token"))

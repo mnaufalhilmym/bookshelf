@@ -2,8 +2,10 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/mnaufalhilmym/bookshelf/internal/model"
 	"github.com/mnaufalhilmym/bookshelf/internal/usecase"
 	"github.com/mnaufalhilmym/gotracing"
@@ -21,6 +23,10 @@ func (h *BookHandler) GetMany(ctx *gin.Context) {
 	request := new(model.GetManyBooksRequest)
 	if err := ctx.ShouldBindQuery(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -45,6 +51,10 @@ func (h *BookHandler) Get(ctx *gin.Context) {
 	request := new(model.GetBookRequest)
 	if err := ctx.ShouldBindUri(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -62,6 +72,10 @@ func (h *BookHandler) Create(ctx *gin.Context) {
 	request := new(model.CreateBookRequest)
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -79,11 +93,19 @@ func (h *BookHandler) Update(ctx *gin.Context) {
 	request := new(model.UpdateBookRequest)
 	if err := ctx.ShouldBindUri(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
@@ -101,15 +123,19 @@ func (h *BookHandler) Delete(ctx *gin.Context) {
 	request := new(model.DeleteBookRequest)
 	if err := ctx.ShouldBindUri(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			return
+		}
 		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
 		return
 	}
 
-	authorID, err := h.usecase.Delete(ctx, request)
+	bookID, err := h.usecase.Delete(ctx, request)
 	if err != nil {
 		model.ResponseError(ctx, err)
 		return
 	}
 
-	model.ResponseOK(ctx, model.BookResponse{ID: *authorID})
+	model.ResponseOK(ctx, model.BookResponse{ID: *bookID})
 }
