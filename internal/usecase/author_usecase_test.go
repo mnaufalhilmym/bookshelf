@@ -161,7 +161,7 @@ func TestAuthorUsecase_GetMany(t *testing.T) {
 		returned := returned{
 			data:  nil,
 			total: 0,
-			err:   model.InternalServerError(errors.New("failed to get many authors")),
+			err:   model.ErrorInternalServerError(errors.New("failed to get many authors")),
 		}
 
 		resp, total, err := failUc.GetMany(params.ctx, params.request)
@@ -216,7 +216,7 @@ func TestAuthorUsecase_Get(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("author not found")),
+			err:  model.ErrorNotFound(errors.New("author not found")),
 		}
 
 		resp, err := uc.Get(params.ctx, params.request)
@@ -233,7 +233,7 @@ func TestAuthorUsecase_Get(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find author data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find author data by id")),
 		}
 
 		resp, err := failUc.Get(params.ctx, params.request)
@@ -287,7 +287,7 @@ func TestAuthorUsecase_Create(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to create new author")),
+			err:  model.ErrorInternalServerError(errors.New("failed to create new author")),
 		}
 
 		resp, err := failUc.Create(params.ctx, params.request)
@@ -405,7 +405,7 @@ func TestAuthorUsecase_Update(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("id not found")),
+			err:  model.ErrorNotFound(errors.New("id not found")),
 		}
 
 		resp, err := uc.Update(params.ctx, params.request)
@@ -424,7 +424,7 @@ func TestAuthorUsecase_Update(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find author data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find author data by id")),
 		}
 
 		resp, err := failUc.Update(params.ctx, params.request)
@@ -478,7 +478,7 @@ func TestAuthorUsecase_Delete(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("id not found")),
+			err:  model.ErrorNotFound(errors.New("id not found")),
 		}
 
 		resp, err := uc.Delete(params.ctx, params.request)
@@ -495,7 +495,7 @@ func TestAuthorUsecase_Delete(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find author data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find author data by id")),
 		}
 
 		resp, err := failUc.Delete(params.ctx, params.request)

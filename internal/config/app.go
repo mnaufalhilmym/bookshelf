@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mnaufalhilmym/bookshelf/internal/delivery/http/handler"
+	"github.com/mnaufalhilmym/bookshelf/internal/delivery/http/middleware"
 	"github.com/mnaufalhilmym/bookshelf/internal/delivery/http/route"
 	"github.com/mnaufalhilmym/bookshelf/internal/repository"
 	"github.com/mnaufalhilmym/bookshelf/internal/usecase"
@@ -32,11 +33,15 @@ func Bootstrap(
 	authorHandler := handler.NewAuthorHandler(authorUsecase)
 	bookHandler := handler.NewBookHandler(bookUsecase)
 
+	// Middleware
+	validateTokenMiddleware := middleware.NewValidateTokenMiddleware(jwtKey, userUsecase)
+
 	routeConfig := route.New(
 		router,
 		userHandler,
 		authorHandler,
 		bookHandler,
+		validateTokenMiddleware,
 	)
 
 	routeConfig.ConfigureRoutes()

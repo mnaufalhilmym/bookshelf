@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mnaufalhilmym/bookshelf/internal/entity"
@@ -17,7 +18,9 @@ type AuthorRepository struct {
 
 func NewAuthorRepository(db *gorm.DB) *AuthorRepository {
 	if err := db.Migrator().CreateTable(&entity.Author{}); err != nil {
-		panic(fmt.Errorf("failed to migrate entity: %w", err))
+		if !strings.Contains(err.Error(), "already exists") {
+			panic(fmt.Errorf("failed to migrate entity: %w", err))
+		}
 	}
 
 	return &AuthorRepository{}

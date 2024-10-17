@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/mnaufalhilmym/bookshelf/internal/entity"
 	"github.com/mnaufalhilmym/gotracing"
@@ -15,7 +16,9 @@ type UserRepository struct {
 
 func NewUserRepository(db *gorm.DB) *UserRepository {
 	if err := db.Migrator().CreateTable(&entity.User{}); err != nil {
-		panic(fmt.Errorf("failed to migrate entity: %w", err))
+		if !strings.Contains(err.Error(), "already exists") {
+			panic(fmt.Errorf("failed to migrate entity: %w", err))
+		}
 	}
 
 	return &UserRepository{}

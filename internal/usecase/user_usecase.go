@@ -43,7 +43,7 @@ func (uc *UserUsecase) Register(ctx context.Context, request *model.RegisterUser
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
 		gotracing.Error("Failed to generate hashed password", err)
-		return nil, model.InternalServerError(errors.New("failed to generate hashed password"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to generate hashed password"))
 	}
 
 	user := &entity.User{
@@ -53,14 +53,14 @@ func (uc *UserUsecase) Register(ctx context.Context, request *model.RegisterUser
 
 	if err := uc.repository.Create(tx, user); err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return nil, model.BadRequest(errors.New("duplicate username"))
+			return nil, model.ErrorBadRequest(errors.New("duplicate username"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to create new user"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to create new user"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToUserResponse(user), nil
@@ -73,16 +73,16 @@ func (uc *UserUsecase) Login(ctx context.Context, request *model.LoginRequest) (
 	user, err := uc.repository.FindByUsername(tx, request.Username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("username not found"))
+			return nil, model.ErrorNotFound(errors.New("username not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find user data by username"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find user data by username"))
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-			return nil, model.BadRequest(errors.New("wrong password"))
+			return nil, model.ErrorBadRequest(errors.New("wrong password"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to compare hash and password"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to compare hash and password"))
 	}
 
 	jwtClaims := model.JWTClaims{ID: user.ID}
@@ -94,13 +94,33 @@ func (uc *UserUsecase) Login(ctx context.Context, request *model.LoginRequest) (
 	tokenString, err := token.SignedString([]byte(uc.jwtKey))
 	if err != nil {
 		gotracing.Error("Failed to sign JWT token", err)
-		return nil, model.InternalServerError(errors.New("failed to sign JWT token"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to sign JWT token"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToLoginResponse(user, tokenString), nil
+}
+
+func (uc *UserUsecase) GetByUsername(ctx context.Context, username string) (*model.UserResponse, error) {
+	tx := uc.db.WithContext(ctx).Begin(&sql.TxOptions{ReadOnly: true})
+	defer tx.Rollback()
+
+	if err := tx.Commit().Error; err != nil {
+		gotracing.Error("Failed to commit transaction", err)
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
+	}
+
+	user, err := uc.repository.FindByUsername(tx, username)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, model.ErrorNotFound(errors.New("username not found"))
+		}
+		return nil, model.ErrorInternalServerError(errors.New("failed to find user data by username"))
+	}
+
+	return model.ToUserResponse(user), nil
 }

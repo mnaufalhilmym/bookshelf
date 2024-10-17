@@ -41,12 +41,12 @@ func (uc *AuthorUsecase) GetMany(ctx context.Context, request *model.GetManyAuth
 		request.Size,
 	)
 	if err != nil {
-		return nil, 0, model.InternalServerError(errors.New("failed to get many authors"))
+		return nil, 0, model.ErrorInternalServerError(errors.New("failed to get many authors"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, 0, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, 0, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToAuthorsResponse(authors), total, nil
@@ -59,14 +59,14 @@ func (uc *AuthorUsecase) Get(ctx context.Context, request *model.GetAuthorReques
 	author, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("author not found"))
+			return nil, model.ErrorNotFound(errors.New("author not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find author data by id"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToAuthorResponse(author), nil
@@ -82,12 +82,12 @@ func (uc *AuthorUsecase) Create(ctx context.Context, request *model.CreateAuthor
 	}
 
 	if err := uc.repository.Create(tx, author); err != nil {
-		return nil, model.InternalServerError(errors.New("failed to create new author"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to create new author"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToAuthorResponse(author), nil
@@ -100,9 +100,9 @@ func (uc *AuthorUsecase) Update(ctx context.Context, request *model.UpdateAuthor
 	author, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("id not found"))
+			return nil, model.ErrorNotFound(errors.New("id not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find author data by id"))
 	}
 
 	if request.Name != nil && *request.Name != "" {
@@ -114,12 +114,12 @@ func (uc *AuthorUsecase) Update(ctx context.Context, request *model.UpdateAuthor
 	}
 
 	if err := uc.repository.Update(tx, author); err != nil {
-		return nil, model.InternalServerError(errors.New("failed to update author"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to update author"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToAuthorResponse(author), nil
@@ -132,18 +132,18 @@ func (uc *AuthorUsecase) Delete(ctx context.Context, request *model.DeleteAuthor
 	author, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("id not found"))
+			return nil, model.ErrorNotFound(errors.New("id not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find author data by id"))
 	}
 
 	if err := uc.repository.Delete(tx, author); err != nil {
-		return nil, model.InternalServerError(errors.New("failed to delete author"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to delete author"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return &author.ID, nil

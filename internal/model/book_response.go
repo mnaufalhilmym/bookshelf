@@ -4,10 +4,10 @@ import "github.com/mnaufalhilmym/bookshelf/internal/entity"
 
 type BookResponse struct {
 	ID         int    `json:"id"`
-	Title      string `json:"title,omitempty"`
-	ISBN       string `json:"isbn,omitempty"`
-	AuthorID   int    `json:"author_id,omitempty"`
-	AuthorName string `json:"author_name,omitempty"`
+	Title      string `json:"title"`
+	ISBN       string `json:"isbn"`
+	AuthorID   int    `json:"author_id"`
+	AuthorName string `json:"author_name"`
 }
 
 func ToBookResponse(book *entity.Book) *BookResponse {

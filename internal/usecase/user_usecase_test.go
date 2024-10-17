@@ -70,7 +70,7 @@ func TestUserUsecase_Register(t *testing.T) {
 		}
 		returned := returned{
 			resp: nil,
-			err:  model.BadRequest(errors.New("duplicate username")),
+			err:  model.ErrorBadRequest(errors.New("duplicate username")),
 		}
 
 		uc.Register(params.ctx, params.request)
@@ -89,7 +89,7 @@ func TestUserUsecase_Register(t *testing.T) {
 		}
 		returned := returned{
 			resp: nil,
-			err:  model.InternalServerError(errors.New("failed to create new user")),
+			err:  model.ErrorInternalServerError(errors.New("failed to create new user")),
 		}
 
 		resp, err := failUc.Register(params.ctx, params.request)
@@ -154,7 +154,7 @@ func TestUserUsecase_Login(t *testing.T) {
 		}
 		returned := returned{
 			resp: nil,
-			err:  model.NotFound(errors.New("username not found")),
+			err:  model.ErrorNotFound(errors.New("username not found")),
 		}
 
 		resp, err := uc.Login(params.ctx, params.request2)
@@ -172,7 +172,7 @@ func TestUserUsecase_Login(t *testing.T) {
 		}
 		returned := returned{
 			resp: nil,
-			err:  model.BadRequest(errors.New("wrong password")),
+			err:  model.ErrorBadRequest(errors.New("wrong password")),
 		}
 
 		resp, err := uc.Login(params.ctx, params.request2)
@@ -190,7 +190,7 @@ func TestUserUsecase_Login(t *testing.T) {
 		}
 		returned := returned{
 			resp: nil,
-			err:  model.InternalServerError(errors.New("failed to find user data by username")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find user data by username")),
 		}
 
 		resp, err := failUc.Login(params.ctx, params.request2)

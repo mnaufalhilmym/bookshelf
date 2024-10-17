@@ -203,7 +203,7 @@ func TestBookUsecase_GetMany(t *testing.T) {
 		returned := returned{
 			data:  nil,
 			total: 0,
-			err:   model.InternalServerError(errors.New("failed to get many books")),
+			err:   model.ErrorInternalServerError(errors.New("failed to get many books")),
 		}
 
 		resp, total, err := bookFailUc.GetMany(params.ctx, params.request)
@@ -265,7 +265,7 @@ func TestBookUsecase_Get(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("book not found")),
+			err:  model.ErrorNotFound(errors.New("book not found")),
 		}
 
 		resp, err := bookUc.Get(params.ctx, params.request)
@@ -282,7 +282,7 @@ func TestBookUsecase_Get(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find book data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find book data by id")),
 		}
 
 		resp, err := bookFailUc.Get(params.ctx, params.request)
@@ -346,7 +346,7 @@ func TestBookUsecase_Create(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("author not found")),
+			err:  model.ErrorNotFound(errors.New("author not found")),
 		}
 
 		resp, err := bookUc.Create(params.ctx, params.request)
@@ -365,7 +365,7 @@ func TestBookUsecase_Create(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find author data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find author data by id")),
 		}
 
 		resp, err := bookFailUc.Create(params.ctx, params.request)
@@ -533,7 +533,7 @@ func TestBookUsecase_Update(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("id not found")),
+			err:  model.ErrorNotFound(errors.New("id not found")),
 		}
 
 		resp, err := bookUc.Update(params.ctx, params.request)
@@ -558,7 +558,7 @@ func TestBookUsecase_Update(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("id not found")),
+			err:  model.ErrorNotFound(errors.New("id not found")),
 		}
 
 		resp, err := bookUc.Update(params.ctx, params.request)
@@ -575,7 +575,7 @@ func TestBookUsecase_Update(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find book data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find book data by id")),
 		}
 
 		resp, err := bookFailUc.Update(params.ctx, params.request)
@@ -636,7 +636,7 @@ func TestBookUsecase_Delete(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.NotFound(errors.New("id not found")),
+			err:  model.ErrorNotFound(errors.New("id not found")),
 		}
 
 		resp, err := bookUc.Delete(params.ctx, params.request)
@@ -653,7 +653,7 @@ func TestBookUsecase_Delete(t *testing.T) {
 		}
 		returned := returned{
 			data: nil,
-			err:  model.InternalServerError(errors.New("failed to find book data by id")),
+			err:  model.ErrorInternalServerError(errors.New("failed to find book data by id")),
 		}
 
 		resp, err := bookFailUc.Delete(params.ctx, params.request)

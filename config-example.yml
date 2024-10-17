@@ -1,1 +1,23 @@
 # Rename this file to config.yml
+
+app:
+  mode: debug # debug, release, or test
+
+log:
+  print_level: INFO # TRACE, DEBUG, INFO, WARN, ERROR, OFF
+  stacktrace_level: ERROR # TRACE, DEBUG, INFO, WARN, ERROR, OFF
+  max_pc: 10 # maximum stacktrace program counter
+
+web:
+  address: :8080
+
+db:
+  name: sqlite.db
+  pool:
+    idle: 10
+    max: 100
+    lifetime: 300
+
+jwt:
+  key: YoLxLR649wqS2Je9mtnSD7ELTFH78m7FDa8xACQcNMeFL6BKxwjmzjWBZPxYWWtG
+  duration: 168h0m0s

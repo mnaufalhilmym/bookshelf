@@ -24,10 +24,10 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
 		if errs, ok := err.(validator.ValidationErrors); ok {
-			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			model.ResponseError(ctx, model.ErrorBadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
 			return
 		}
-		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
+		model.ResponseError(ctx, model.ErrorBadRequest(errors.New("failed to parse request")))
 		return
 	}
 
@@ -45,10 +45,10 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		gotracing.Error("Failed to parse request", err)
 		if errs, ok := err.(validator.ValidationErrors); ok {
-			model.ResponseError(ctx, model.BadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
+			model.ResponseError(ctx, model.ErrorBadRequest(fmt.Errorf("validation error in field %s", errs[0].Field())))
 			return
 		}
-		model.ResponseError(ctx, model.BadRequest(errors.New("failed to parse request")))
+		model.ResponseError(ctx, model.ErrorBadRequest(errors.New("failed to parse request")))
 		return
 	}
 

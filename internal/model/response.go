@@ -10,7 +10,7 @@ import (
 type Response[T any] struct {
 	Error      string      `json:"error,omitempty"`
 	Pagination *pagination `json:"pagination,omitempty"`
-	Data       T           `json:"data,omitempty"`
+	Data       T           `json:"data"`
 }
 
 type pagination struct {

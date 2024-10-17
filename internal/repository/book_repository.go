@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/mnaufalhilmym/bookshelf/internal/entity"
 	"github.com/mnaufalhilmym/goasync"
@@ -17,7 +18,9 @@ type BookRepository struct {
 
 func NewBookRepository(db *gorm.DB) *BookRepository {
 	if err := db.Migrator().CreateTable(&entity.Book{}); err != nil {
-		panic(fmt.Errorf("failed to migrate entity: %w", err))
+		if !strings.Contains(err.Error(), "already exists") {
+			panic(fmt.Errorf("failed to migrate entity: %w", err))
+		}
 	}
 
 	return &BookRepository{}

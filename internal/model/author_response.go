@@ -8,8 +8,8 @@ import (
 
 type AuthorResponse struct {
 	ID        int       `json:"id"`
-	Name      string    `json:"name,omitempty"`
-	Birthdate time.Time `json:"birthdate,omitempty"`
+	Name      string    `json:"name"`
+	Birthdate time.Time `json:"birthdate"`
 }
 
 func ToAuthorResponse(author *entity.Author) *AuthorResponse {

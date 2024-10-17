@@ -45,12 +45,12 @@ func (uc *BookUsecase) GetMany(ctx context.Context, request *model.GetManyBooksR
 		request.Size,
 	)
 	if err != nil {
-		return nil, 0, model.InternalServerError(errors.New("failed to get many books"))
+		return nil, 0, model.ErrorInternalServerError(errors.New("failed to get many books"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, 0, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, 0, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToBooksResponse(books), total, nil
@@ -63,14 +63,14 @@ func (uc *BookUsecase) Get(ctx context.Context, request *model.GetBookRequest) (
 	book, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("book not found"))
+			return nil, model.ErrorNotFound(errors.New("book not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find book data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find book data by id"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToBookResponse(book), nil
@@ -83,9 +83,9 @@ func (uc *BookUsecase) Create(ctx context.Context, request *model.CreateBookRequ
 	author, err := uc.authorRepository.FindByID(tx, request.AuthorID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("author not found"))
+			return nil, model.ErrorNotFound(errors.New("author not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find author data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find author data by id"))
 	}
 
 	book := &entity.Book{
@@ -96,12 +96,15 @@ func (uc *BookUsecase) Create(ctx context.Context, request *model.CreateBookRequ
 	}
 
 	if err := uc.repository.Create(tx, book); err != nil {
-		return nil, model.InternalServerError(errors.New("failed to create new book"))
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return nil, model.ErrorBadRequest(errors.New("duplicate isbn"))
+		}
+		return nil, model.ErrorInternalServerError(errors.New("failed to create new book"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToBookResponse(book), nil
@@ -114,9 +117,9 @@ func (uc *BookUsecase) Update(ctx context.Context, request *model.UpdateBookRequ
 	book, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("id not found"))
+			return nil, model.ErrorNotFound(errors.New("id not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find book data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find book data by id"))
 	}
 
 	if request.Title != nil && *request.Title != "" {
@@ -131,9 +134,9 @@ func (uc *BookUsecase) Update(ctx context.Context, request *model.UpdateBookRequ
 		author, err := uc.authorRepository.FindByID(tx, *request.AuthorID)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, model.NotFound(errors.New("id not found"))
+				return nil, model.ErrorNotFound(errors.New("id not found"))
 			}
-			return nil, model.InternalServerError(errors.New("failed to find author data by id"))
+			return nil, model.ErrorInternalServerError(errors.New("failed to find author data by id"))
 		}
 
 		book.AuthorID = author.ID
@@ -141,12 +144,12 @@ func (uc *BookUsecase) Update(ctx context.Context, request *model.UpdateBookRequ
 	}
 
 	if err := uc.repository.Update(tx, book); err != nil {
-		return nil, model.InternalServerError(errors.New("failed to update book data"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to update book data"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return model.ToBookResponse(book), nil
@@ -159,18 +162,18 @@ func (uc *BookUsecase) Delete(ctx context.Context, request *model.DeleteBookRequ
 	book, err := uc.repository.FindByID(tx, request.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, model.NotFound(errors.New("id not found"))
+			return nil, model.ErrorNotFound(errors.New("id not found"))
 		}
-		return nil, model.InternalServerError(errors.New("failed to find book data by id"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to find book data by id"))
 	}
 
 	if err := uc.repository.Delete(tx, book); err != nil {
-		return nil, model.InternalServerError(errors.New("failed to delete author"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to delete author"))
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		gotracing.Error("Failed to commit transaction", err)
-		return nil, model.InternalServerError(errors.New("failed to commit transaction"))
+		return nil, model.ErrorInternalServerError(errors.New("failed to commit transaction"))
 	}
 
 	return &book.ID, nil

@@ -21,7 +21,7 @@ func customErrorHandler() gin.HandlerFunc {
 		ctx.Next()
 
 		if len(ctx.Errors) > 0 {
-			model.ResponseError(ctx, model.InternalServerError(ctx.Errors[0]))
+			model.ResponseError(ctx, model.ErrorInternalServerError(ctx.Errors[0]))
 		}
 	}
 }
